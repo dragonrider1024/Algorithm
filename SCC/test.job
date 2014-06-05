@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+#PBS -l walltime=36:00:00,mem=4gb,ncpus=4,host=stheno
+
+trap "\cp result.txt $PBS_O_WORKDIR;\rm $PBS_O_WORKDIR/$PBS_JOBID" 0 1 2 3 9 15
+
+
+cd $TMPDIR
+
+echo -P- $NCPUS > Default.Route 
+echo -M- 500000000 >> Default.Route 
+
+module purge 
+module load intel-fc-10.0.023 intel-cc-10.0.023 intel-mkl-9.1
+
+ln -s /work_$HOST/$PBS_JOBID $PBS_O_WORKDIR/$PBS_JOBID 
+
+cp $PBS_O_WORKDIR/* .
+
+./runSCC.py   >  result.txt
+
+env
+
+exit
